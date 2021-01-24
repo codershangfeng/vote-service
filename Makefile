@@ -26,3 +26,8 @@ build: fmt validate gen
 .PHONY: run
 run: fmt
 	go run ./cmd/main.go
+
+.PHONY: install-swagger # Install go-swagger
+install-swagger:
+	@echo ">> Installing go-swagger"
+	go get -u github.com/go-swagger/go-swagger/cmd/swagger
