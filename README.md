@@ -35,10 +35,9 @@ $ gvm use go1.15 --default
 
 ### Build app
 ```zsh
-$ cd app
 $ make build
 ```
-The binary will be generated into `app/bin` folder.
+The binary will be generated into `./bin` folder.
 
 
 ## How to Deploy

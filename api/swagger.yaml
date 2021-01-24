@@ -1,0 +1,10 @@
+swagger: '2.0'
+info:
+  title: Vote Service
+  version: 0.0.1
+paths:
+  /health:
+    get:
+      responses:
+        200:
+          description: returns health status
