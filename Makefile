@@ -20,6 +20,9 @@ build: fmt validate gen
 	mkdir -p ./bin
 	go build \
 	-a \
-	-installsuffix cgo \
-	-o ./bin ./cmd/main.go
-	@echo "\033[0;32mSuccessfully build application in ./bin/main\033[0m"
+	-o ./bin/vote-service ./cmd/main.go
+	@echo "\033[0;32mSuccessfully build application in ./bin/vote-service\033[0m"
+
+.PHONY: run
+run: fmt
+	go run ./cmd/main.go
