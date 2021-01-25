@@ -9,7 +9,7 @@ RUN go mod verify
 RUN make build
 
 
-FROM alpine
+FROM scratch
 
 LABEL Name="vote-service"
 

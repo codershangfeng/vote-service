@@ -18,8 +18,9 @@ gen: validate
 .PHONY: build
 build: fmt validate gen
 	mkdir -p ./bin
-	go build \
+	CGO_ENABLED=0 GOOS=linux go build \
 	-a \
+	-installsuffix cgo \
 	-o ./bin/vote-service ./cmd/main.go
 	@echo "\033[0;32mSuccessfully build application in ./bin/vote-service\033[0m"
 
