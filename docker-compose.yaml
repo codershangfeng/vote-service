@@ -1,0 +1,7 @@
+version: '3'
+services:
+  vote-service:
+    build: .
+    image: vote-service
+    ports:
+      - 8080:8080
