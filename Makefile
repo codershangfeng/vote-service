@@ -32,3 +32,13 @@ run: fmt
 install-swagger:
 	@echo ">> Installing go-swagger"
 	go get -u github.com/go-swagger/go-swagger/cmd/swagger
+
+.PHONY: swagger-editor
+swagger-editor:
+	MY_VAR=$$(docker ps | grep swaggerapi/swagger-editor | cut -d" " -f 1) && \
+    if [ -n "$$MY_VAR" ]; then \
+	  echo "Stop exising swagger editor..."; \
+      docker stop "$$MY_VAR"; \
+    fi && \
+	docker run -d --rm -p 80:8080 swaggerapi/swagger-editor &&\
+    echo '$@: Successfully start Swagger editor'
