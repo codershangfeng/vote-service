@@ -33,6 +33,13 @@ To switch to a specific version, run:
 $ gvm use go1.15 --default
 ```
 
+### Install Go-Swagger
+```zsh
+$ brew tap go-swagger/go-swagger
+$ brew install go-swagger
+```
+Install swagger tool, [more details](https://goswagger.io/install.html)
+
 ### Build app
 ```zsh
 $ make build
