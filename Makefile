@@ -8,6 +8,7 @@ validate:
 
 .PHONY: gen
 gen: validate
+	rm -rf ./internal/api
 	mkdir -p ./internal/api
 	swagger generate server \
 			--target=./internal/api \
