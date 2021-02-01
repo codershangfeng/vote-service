@@ -48,11 +48,18 @@ The binary will be generated into `./bin` folder.
 
 ## Hot to Test
 
+### Run All Test
+```zsh
+$ make test
+```
+### Run Unit Test
+```zsh
+$ make unit-test
+```
 ### Run Integration Test
 ```zsh
-$ make test-integration
+$ make integration-test
 ```
-
 
 
 ## How to Deploy
