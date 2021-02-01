@@ -5,13 +5,13 @@ package handler
 import (
 	"testing"
 
-	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations"
+	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/probe"
 )
 
 func TestGetHealthHandler(t *testing.T) {
-	got := getHealthHandler(operations.NewGetHealthParams())
+	got := getHealthHandler(probe.NewGetHealthParams())
 
-	if got.(*operations.GetHealthOK) == operations.NewGetHealthOK() {
+	if got.(*probe.GetHealthOK) == probe.NewGetHealthOK() {
 		t.Errorf("Expected NewGetHealthOK response, but got: %v1", got)
 	}
 }

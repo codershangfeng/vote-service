@@ -5,6 +5,7 @@ import (
 
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi"
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations"
+	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/probe"
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/runtime/middleware"
 )
@@ -20,9 +21,9 @@ func main() {
 	defer server.Shutdown()
 
 	server.Port = 8080
-	api.GetHealthHandler = operations.GetHealthHandlerFunc(
-		func(ghp operations.GetHealthParams) middleware.Responder {
-			return operations.NewGetHealthOK()
+	api.ProbeGetHealthHandler = probe.GetHealthHandlerFunc(
+		func(ghp probe.GetHealthParams) middleware.Responder {
+			return probe.NewGetHealthOK()
 		})
 
 	if err := server.Serve(); err != nil {
