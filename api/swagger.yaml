@@ -17,7 +17,7 @@ paths:
       tags:
       - "vote"
       summary: "Find vote by ID"
-      description: "Return a single vote"
+      description: "Returns a single vote"
       operationId: "getVoteById"
       produces:
       - "application/json"

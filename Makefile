@@ -42,3 +42,7 @@ swagger-editor:
     fi && \
 	docker run -d --rm -p 80:8080 swaggerapi/swagger-editor &&\
     echo '$@: Successfully start Swagger editor'
+
+.PHONY: test-integration
+test-integration: fmt
+	go test -tags=integration ./...

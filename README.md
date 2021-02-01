@@ -46,5 +46,13 @@ $ make build
 ```
 The binary will be generated into `./bin` folder.
 
+## Hot to Test
+
+### Run Integration Test
+```zsh
+$ make test-integration
+```
+
+
 
 ## How to Deploy
