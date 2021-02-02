@@ -44,14 +44,20 @@ swagger-editor:
 	docker run -d --rm -p 80:8080 swaggerapi/swagger-editor &&\
     echo '$@: Successfully start Swagger editor'
 
-.PHONE: unit-test
-unit-test: fmt
+
+# Test
+.PHONY: clean-test-cache
+clean-test-cache:
+	go clean -testcache
+
+.PHONY: utest
+utest: fmt clean-test-cache
 	go test -tags=unit ./...
 
-.PHONY: integration-test
-integration-test: fmt
+.PHONY: itest
+itest: fmt clean-test-cache
 	go test -tags=integration ./...
 
 .PHONY: test
-test: fmt gen
+test: fmt clean-test-cache gen 
 	go test -tags="integration unit" ./...

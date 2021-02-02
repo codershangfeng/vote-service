@@ -54,12 +54,15 @@ $ make test
 ```
 ### Run Unit Test
 ```zsh
-$ make unit-test
+$ make utest
 ```
 ### Run Integration Test
 ```zsh
-$ make integration-test
+$ make itest
 ```
+
+### Debug Test
+(WIP) Remove test tags in the head of each test file, such as `// +build ...`
 
 
 ## How to Deploy
