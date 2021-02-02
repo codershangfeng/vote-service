@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetHealthHandler(t *testing.T) {
-	got := getHealthHandler(probe.NewGetHealthParams())
+	got := GetHealthHandler(probe.NewGetHealthParams())
 
 	if got.(*probe.GetHealthOK) == probe.NewGetHealthOK() {
 		t.Errorf("Expected NewGetHealthOK response, but got: %v1", got)

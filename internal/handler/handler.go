@@ -5,10 +5,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-func BuildGetHealthHandlerFunc() probe.GetHealthHandlerFunc {
-	return getHealthHandler
-}
-
-func getHealthHandler(ghp probe.GetHealthParams) middleware.Responder {
+// GetHealthHandler defines handling flow of GET request against health endpoint
+func GetHealthHandler(ghp probe.GetHealthParams) middleware.Responder {
 	return probe.NewGetHealthOK()
 }
