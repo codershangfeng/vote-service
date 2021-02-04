@@ -5,6 +5,7 @@ package handler
 import (
 	"encoding/json"
 	"log"
+	"math"
 	"reflect"
 	"testing"
 
@@ -21,13 +22,34 @@ func TestGetHealthHandler(t *testing.T) {
 	}
 }
 
-func TestGetVoteByIDHandler(t *testing.T) {
-	params := vote.NewGetVoteByIDParams()
-	params.VoteID = 1
-	got := GetVoteByIDHandler(params)
-	expect := vote.NewGetVoteByIDOK().WithPayload(&models.Vote{ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"})
+func TestShouldReturnOKWhenVoteCanBeFound(t *testing.T) {
+	votes := [...]models.Vote{
+		{ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"},
+		{ID: 2, Options: []string{"Noodle", "Dumpling"}, Topic: "Which food do you prefer?"},
+		{ID: 3, Options: []string{"Basketball", "Billiards"}, Topic: "Which sports do you prefer?"},
+		{ID: 4, Options: []string{"Beethoven", "Mozart"}, Topic: "Which artist do you prefer?"},
+	}
+	for _, v := range votes {
+		params := vote.NewGetVoteByIDParams()
+		params.VoteID = v.ID
+		got := GetVoteByIDHandler(params)
 
-	if !reflect.DeepEqual(got.(*vote.GetVoteByIDOK), expect) {
+		expect := vote.NewGetVoteByIDOK().WithPayload(&v)
+
+		if !reflect.DeepEqual(got.(*vote.GetVoteByIDOK), expect) {
+			t.Errorf("Expected get vote by ID: \n{%s}, but got: \n{%s}\n", marshal(expect), marshal(got))
+		}
+	}
+}
+
+func TestShouldReturnNotFoundWhenVoteCanNotFound(t *testing.T) {
+	params := vote.NewGetVoteByIDParams()
+	params.VoteID = math.MaxInt64
+	got := GetVoteByIDHandler(params)
+
+	expect := vote.NewGetVoteByIDNotFound()
+
+	if !reflect.DeepEqual(got.(*vote.GetVoteByIDNotFound), expect) {
 		t.Errorf("Expected get vote by ID: \n{%s}, but got: \n{%s}\n", marshal(expect), marshal(got))
 	}
 }

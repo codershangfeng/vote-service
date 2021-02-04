@@ -7,6 +7,17 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
+var db map[int64]models.Vote
+
+func init() {
+	db = map[int64]models.Vote{
+		1: {ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"},
+		2: {ID: 2, Options: []string{"Noodle", "Dumpling"}, Topic: "Which food do you prefer?"},
+		3: {ID: 3, Options: []string{"Basketball", "Billiards"}, Topic: "Which sports do you prefer?"},
+		4: {ID: 4, Options: []string{"Beethoven", "Mozart"}, Topic: "Which artist do you prefer?"},
+	}
+}
+
 // GetHealthHandler defines retrieving health status of GET request agaist probe
 func GetHealthHandler(ghp probe.GetHealthParams) middleware.Responder {
 	return probe.NewGetHealthOK()
@@ -14,5 +25,9 @@ func GetHealthHandler(ghp probe.GetHealthParams) middleware.Responder {
 
 // GetVoteByIDHandler defines retrieving vote item by ID of GET request against vote
 func GetVoteByIDHandler(gvbip vote.GetVoteByIDParams) middleware.Responder {
-	return vote.NewGetVoteByIDOK().WithPayload(&models.Vote{ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"})
+	v, ok := db[gvbip.VoteID]
+	if !ok {
+		return vote.NewGetVoteByIDNotFound()
+	}
+	return vote.NewGetVoteByIDOK().WithPayload(&v)
 }
