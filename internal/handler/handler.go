@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"fmt"
+	"math/rand"
+
 	"github.com/codershangfeng/vote-service/app/internal/api/models"
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/probe"
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/vote"
@@ -26,6 +29,15 @@ func GetHealthHandler(ghp probe.GetHealthParams) middleware.Responder {
 // GetVoteByIDHandler defines retrieving vote item by ID of GET request against vote
 func GetVoteByIDHandler(gvbip vote.GetVoteByIDParams) middleware.Responder {
 	v, ok := db[gvbip.VoteID]
+
+	// Bug!
+	r := rand.Intn(2)
+
+	if r == 0 {
+		fmt.Errorf("Bug triggered when r = {%d}!", r)
+		return vote.NewGetVoteByIDBadRequest()
+	}
+
 	if !ok {
 		return vote.NewGetVoteByIDNotFound()
 	}
