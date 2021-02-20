@@ -62,7 +62,9 @@ $ make itest
 ```
 
 ### Debug Test
-(WIP) Remove test tags in the head of each test file, such as `// +build ...`
+- Because all current test files are tagged with `+build`, which let to vs-code can not debug, a work around solution is to remove test tags in the head of each test file, such as `// +build ...`
 
+## How to Deploy to Local Demo Kubernetes Cluster
 
-## How to Deploy
+- `docker-compose build`: build an image `vote-service` with **latest** version.
+- Refer to demo k8s resources repo, and apply the resouces files in the folder `vote-service`.
