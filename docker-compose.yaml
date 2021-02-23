@@ -2,6 +2,6 @@ version: '3'
 services:
   vote-service:
     build: .
-    image: vote-service
+    image: vote-service:v1
     ports:
       - 8080:8080
