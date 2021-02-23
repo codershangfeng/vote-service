@@ -27,7 +27,6 @@ func GetHealthHandler(ghp probe.GetHealthParams) middleware.Responder {
 
 // GetVoteByIDHandler defines retrieving vote item by ID of GET request against vote
 func GetVoteByIDHandler(gvbip vote.GetVoteByIDParams) middleware.Responder {
-	// if gvbip != nil && gvbip.HTTPRequest != nil && gvbip.HTTPRequest.Header != nil {}
 	if gvbip.HTTPRequest != nil {
 		log.Printf("Request header: %v", gvbip.HTTPRequest.Header)
 	}
