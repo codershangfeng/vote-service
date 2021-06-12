@@ -5,6 +5,7 @@ import (
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations"
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/probe"
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/vote"
+	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/votes"
 	"github.com/codershangfeng/vote-service/app/internal/handler"
 	"github.com/go-openapi/loads"
 )
@@ -39,6 +40,10 @@ func NewAPIHandler() (*operations.VoteServiceAPI, error) {
 
 	api.VoteGetVoteByIDHandler = vote.GetVoteByIDHandlerFunc(
 		handler.GetVoteByIDHandler,
+	)
+
+	api.VotesGetVotesHandler = votes.GetVotesHandlerFunc(
+		handler.GetVotes,
 	)
 
 	return api, nil

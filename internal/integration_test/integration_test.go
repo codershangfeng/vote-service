@@ -57,6 +57,21 @@ func TestGetVoteByIDAPI(t *testing.T) {
 	}
 }
 
+func TestGetVotesAPI(t *testing.T) {
+	res, err := http.Get(ts.URL + "/votes")
+
+	if err != nil {
+		t.Errorf("Failed to send request to get vote by id endpoint: %s", err)
+	}
+
+	got := res.StatusCode
+	expect := 200
+
+	if got != expect {
+		t.Errorf("Expect get vote by id return %d, but got %d", expect, got)
+	}
+}
+
 func configureTestAPI(api *operations.VoteServiceAPI) http.Handler {
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }

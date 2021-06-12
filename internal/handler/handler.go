@@ -1,11 +1,10 @@
 package handler
 
 import (
-	"log"
-
 	"github.com/codershangfeng/vote-service/app/internal/api/models"
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/probe"
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/vote"
+	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/votes"
 	"github.com/go-openapi/runtime/middleware"
 )
 
@@ -27,13 +26,20 @@ func GetHealthHandler(ghp probe.GetHealthParams) middleware.Responder {
 
 // GetVoteByIDHandler defines retrieving vote item by ID of GET request against vote
 func GetVoteByIDHandler(gvbip vote.GetVoteByIDParams) middleware.Responder {
-	if gvbip.HTTPRequest != nil {
-		log.Printf("Request header: %v", gvbip.HTTPRequest.Header)
-	}
-
 	v, ok := db[gvbip.VoteID]
 	if !ok {
 		return vote.NewGetVoteByIDNotFound()
 	}
 	return vote.NewGetVoteByIDOK().WithPayload(&v)
+}
+
+func GetVotes(gvp votes.GetVotesParams) middleware.Responder {
+	vs := make(models.Votes, len(db))
+
+	for k, v := range db {
+		value := v
+		vs[k-1] = &value
+	}
+
+	return votes.NewGetVotesOK().WithPayload(vs)
 }

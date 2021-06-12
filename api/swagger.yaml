@@ -37,8 +37,27 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "Vote not found"
+  /votes:
+    get:
+      tags:
+      - "votes"
+      summary: "Find all vote"
+      description: "Returns all the collection of vote"
+      operationId: "getVotes"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Votes"
 
 definitions:
+  Votes:
+    type: array
+    items:
+      $ref: "#/definitions/Vote"
+
   Vote:
     type: object
     properties:
