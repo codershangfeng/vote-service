@@ -9,17 +9,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-var db map[int64]models.Vote
-
-func init() {
-	db = map[int64]models.Vote{
-		1: {ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"},
-		2: {ID: 2, Options: []string{"Noodle", "Dumpling"}, Topic: "Which food do you prefer?"},
-		3: {ID: 3, Options: []string{"Basketball", "Billiards"}, Topic: "Which sports do you prefer?"},
-		4: {ID: 4, Options: []string{"Beethoven", "Mozart"}, Topic: "Which artist do you prefer?"},
-	}
-}
-
 var repository persistence.Repository
 
 func InitRepository(repo persistence.Repository) {

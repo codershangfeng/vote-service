@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
-	"log"
 	"testing"
 
 	"github.com/codershangfeng/vote-service/app/internal/api/models"
@@ -82,12 +80,4 @@ func TestShouldReturnOKWhenVotesCanBeFound(t *testing.T) {
 		{ID: 2, Options: []string{"Noodle", "Dumpling"}, Topic: "Which food do you prefer?"},
 	}), got.(*votes.GetVotesOK))
 	mockRepo.AssertExpectations(t)
-}
-
-func marshal(v interface{}) string {
-	bytes, err := json.Marshal(v)
-	if err != nil {
-		log.Fatalf("Failed to marshal object {%T} to json\n", v)
-	}
-	return string(bytes)
 }
