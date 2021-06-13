@@ -5,6 +5,6 @@
 		}
 	],
 	"settings": {
-		"go.testFlags": ["-v"]
+		"go.testFlags": ["-v", "-tags=integration unit"]
 	}
 }
