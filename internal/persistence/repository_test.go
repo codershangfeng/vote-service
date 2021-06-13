@@ -9,9 +9,9 @@ var mockVote = VoteEntity{ID: 1, Options: []string{"apple"}, Topic: "What's your
 
 func TestShouldSaveVoteSuccessfully(t *testing.T) {
 	db := make(map[int64]VoteEntity)
-	repo := Repository{database: db}
+	repo := RepositoryImpl{database: db}
 
-	repo.SaveVote(mockVote)
+	repo.SaveVoteEntity(mockVote)
 
 	assert.NotEmpty(t, db)
 	assert.Equal(t, 1, len(db))
@@ -22,10 +22,10 @@ func TestShouldSaveVoteSuccessfully(t *testing.T) {
 
 func TestShouldGetVoteByIDSuccessfully(t *testing.T) {
 	db := make(map[int64]VoteEntity)
-	repo := Repository{database: db}
+	repo := RepositoryImpl{database: db}
 	db[mockVote.ID] = mockVote
 
-	got := repo.GetVote(int64(1))
+	got := repo.GetVoteEntity(int64(1))
 
 	assert.NotNil(t, got)
 	assert.Equal(t, int64(1), got.ID)
@@ -35,19 +35,19 @@ func TestShouldGetVoteByIDSuccessfully(t *testing.T) {
 
 func TestShouldReturnNilWhenGetVoteByIDAndVoteDoesNotExist(t *testing.T) {
 	db := make(map[int64]VoteEntity)
-	repo := Repository{database: db}
+	repo := RepositoryImpl{database: db}
 
-	got := repo.GetVote(int64(1))
+	got := repo.GetVoteEntity(int64(1))
 
 	assert.Nil(t, got)
 }
 
 func TestShouldNotImpactOriginalEntityWhenModifyItemReturnedFromGetVote(t *testing.T) {
 	db := make(map[int64]VoteEntity)
-	repo := Repository{database: db}
+	repo := RepositoryImpl{database: db}
 	db[mockVote.ID] = mockVote
 
-	got := repo.GetVote(int64(1))
+	got := repo.GetVoteEntity(int64(1))
 	origin := db[mockVote.ID]
 	origin.ID = 3
 	origin.Options = []string{"banana"}
@@ -61,11 +61,11 @@ func TestShouldNotImpactOriginalEntityWhenModifyItemReturnedFromGetVote(t *testi
 
 func TestShouldGetVotesSuccessfully(t *testing.T) {
 	db := make(map[int64]VoteEntity)
-	repo := Repository{database: db}
+	repo := RepositoryImpl{database: db}
 	db[int64(1)] = VoteEntity{ID: 1, Options: []string{"apple"}, Topic: "What's your favorite fruit?"}
 	db[int64(2)] = VoteEntity{ID: 2, Options: []string{"basketball"}, Topic: "What's your favorite sports?"}
 
-	got := repo.GetVotes()
+	got := repo.GetVoteEntities()
 
 	assert.NotEmpty(t, got)
 	assert.Len(t, got, 2)
@@ -75,9 +75,9 @@ func TestShouldGetVotesSuccessfully(t *testing.T) {
 
 func TestShouldReturnEmptyListWhenGetVotesAndVoteDoesNotExist(t *testing.T) {
 	db := make(map[int64]VoteEntity)
-	repo := Repository{database: db}
+	repo := RepositoryImpl{database: db}
 
-	got := repo.GetVotes()
+	got := repo.GetVoteEntities()
 
 	assert.Nil(t, got)
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/probe"
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/vote"
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/votes"
+	"github.com/codershangfeng/vote-service/app/internal/persistence"
 	"github.com/go-openapi/runtime/middleware"
 )
 
@@ -19,6 +20,12 @@ func init() {
 	}
 }
 
+var repository persistence.Repository
+
+func InitRepository(repo persistence.Repository) {
+	repository = repo
+}
+
 // GetHealthHandler defines retrieving health status of GET request agaist probe
 func GetHealthHandler(ghp probe.GetHealthParams) middleware.Responder {
 	return probe.NewGetHealthOK()
@@ -26,19 +33,27 @@ func GetHealthHandler(ghp probe.GetHealthParams) middleware.Responder {
 
 // GetVoteByIDHandler defines retrieving vote item by ID of GET request against vote
 func GetVoteByIDHandler(gvbip vote.GetVoteByIDParams) middleware.Responder {
-	v, ok := db[gvbip.VoteID]
-	if !ok {
+	entity := repository.GetVoteEntity(gvbip.VoteID)
+	if entity == nil {
 		return vote.NewGetVoteByIDNotFound()
 	}
+	v := models.Vote{ID: entity.ID, Options: entity.Options, Topic: entity.Topic}
 	return vote.NewGetVoteByIDOK().WithPayload(&v)
 }
 
 func GetVotes(gvp votes.GetVotesParams) middleware.Responder {
-	vs := make(models.Votes, len(db))
+	entities := repository.GetVoteEntities()
 
-	for k, v := range db {
-		value := v
-		vs[k-1] = &value
+	// vs := make(models.Votes, len(db))
+
+	// for k, v := range db {
+	// 	value := v
+	// 	vs[k-1] = &value
+	// }
+	vs := make(models.Votes, 0, len(entities))
+
+	for _, e := range entities {
+		vs = append(vs, &models.Vote{ID: e.ID, Options: e.Options, Topic: e.Topic})
 	}
 
 	return votes.NewGetVotesOK().WithPayload(vs)

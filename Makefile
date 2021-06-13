@@ -50,14 +50,6 @@ swagger-editor:
 clean-test-cache:
 	go clean -testcache
 
-.PHONY: utest
-utest: fmt clean-test-cache
-	go test -tags=unit ./...
-
-.PHONY: itest
-itest: fmt clean-test-cache
-	go test -tags=integration ./...
-
 .PHONY: test
 test: fmt clean-test-cache gen 
-	go test -v -tags="integration unit" ./...
+	go test -v ./...

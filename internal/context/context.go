@@ -7,6 +7,7 @@ import (
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/vote"
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations/votes"
 	"github.com/codershangfeng/vote-service/app/internal/handler"
+	"github.com/codershangfeng/vote-service/app/internal/persistence"
 	"github.com/go-openapi/loads"
 )
 
@@ -25,7 +26,7 @@ func (ctx *AppContext) NewServer(api *operations.VoteServiceAPI) *restapi.Server
 }
 
 // NewAPIHandler returns the api handler of server
-func NewAPIHandler() (*operations.VoteServiceAPI, error) {
+func NewAPIHandler(repo persistence.Repository) (*operations.VoteServiceAPI, error) {
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 
 	if err != nil {
@@ -33,6 +34,12 @@ func NewAPIHandler() (*operations.VoteServiceAPI, error) {
 	}
 
 	api := operations.NewVoteServiceAPI(swaggerSpec)
+
+	if repo != nil {
+		handler.InitRepository(repo)
+	} else {
+		handler.InitRepository(persistence.NewRepository())
+	}
 
 	api.ProbeGetHealthHandler = probe.GetHealthHandlerFunc(
 		handler.GetHealthHandler,

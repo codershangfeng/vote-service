@@ -7,8 +7,7 @@ import (
 )
 
 func main() {
-
-	api, err := context.NewAPIHandler()
+	api, err := context.NewAPIHandler(nil)
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -1,8 +1,7 @@
-// +build integration
-
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -11,12 +10,22 @@ import (
 
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations"
 	"github.com/codershangfeng/vote-service/app/internal/context"
+	"github.com/codershangfeng/vote-service/app/internal/persistence"
+	"github.com/stretchr/testify/assert"
 )
 
 var ts *httptest.Server
 
 func TestMain(m *testing.M) {
-	api, err := context.NewAPIHandler()
+	mockRepo := persistence.NewRepository()
+	mockRepo.SaveVoteEntity(persistence.VoteEntity{
+		ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?",
+	})
+	mockRepo.SaveVoteEntity(persistence.VoteEntity{
+		ID: 2, Options: []string{"Noodle", "Dumpling"}, Topic: "Which food do you prefer?",
+	})
+
+	api, err := context.NewAPIHandler(mockRepo)
 
 	if err != nil {
 		log.Fatal("Error when create api handler: ", err)
@@ -45,31 +54,23 @@ func TestGetHealthAPI(t *testing.T) {
 func TestGetVoteByIDAPI(t *testing.T) {
 	res, err := http.Get(ts.URL + "/vote/1")
 
-	if err != nil {
-		t.Errorf("Failed to send request to get vote by id endpoint: %s", err)
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, 200, res.StatusCode)
 
-	got := res.StatusCode
-	expect := 200
-
-	if got != expect {
-		t.Errorf("Expect get vote by id return %d, but got %d", expect, got)
-	}
+	body, err := ioutil.ReadAll(res.Body)
+	assert.Nil(t, err)
+	assert.Equal(t, "{\"id\":1,\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"}\n", string(body))
 }
 
 func TestGetVotesAPI(t *testing.T) {
 	res, err := http.Get(ts.URL + "/votes")
 
-	if err != nil {
-		t.Errorf("Failed to send request to get vote by id endpoint: %s", err)
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, 200, res.StatusCode)
 
-	got := res.StatusCode
-	expect := 200
-
-	if got != expect {
-		t.Errorf("Expect get vote by id return %d, but got %d", expect, got)
-	}
+	body, err := ioutil.ReadAll(res.Body)
+	assert.Nil(t, err)
+	assert.Equal(t, "[{\"id\":1,\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"},{\"id\":2,\"options\":[\"Noodle\",\"Dumpling\"],\"topic\":\"Which food do you prefer?\"}]\n", string(body))
 }
 
 func configureTestAPI(api *operations.VoteServiceAPI) http.Handler {
@@ -87,4 +88,3 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	return handler
 }
-
