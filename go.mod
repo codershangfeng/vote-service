@@ -16,6 +16,7 @@ require (
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/stretchr/testify v1.7.0
 	go.mongodb.org/mongo-driver v1.5.3 // indirect
 	golang.org/x/net v0.0.0-20210610132358-84b48f89b13b
 	golang.org/x/sys v0.0.0-20210611083646-a4fc73990273 // indirect
