@@ -51,6 +51,24 @@ paths:
           description: "Successful operation"
           schema:
             $ref: "#/definitions/Votes"
+    post:
+      tags:
+      - "votes"
+      summary: "Save a single vote"
+      description: "Return 201 when created successfully"
+      operationId: "saveVote"
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: vote
+        required: true
+        description: The user to create.
+        schema:
+          $ref: "#/definitions/Vote"
+      responses:
+        '201':
+          description: "Successful created"
 
 definitions:
   Votes:
