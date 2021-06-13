@@ -33,12 +33,6 @@ func GetVoteByIDHandler(gvbip vote.GetVoteByIDParams) middleware.Responder {
 func GetVotes(gvp votes.GetVotesParams) middleware.Responder {
 	entities := repository.GetVoteEntities()
 
-	// vs := make(models.Votes, len(db))
-
-	// for k, v := range db {
-	// 	value := v
-	// 	vs[k-1] = &value
-	// }
 	vs := make(models.Votes, 0, len(entities))
 
 	for _, e := range entities {
