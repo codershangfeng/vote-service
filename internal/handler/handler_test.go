@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/codershangfeng/vote-service/app/internal/api/models"
@@ -62,7 +63,6 @@ func TestShouldReturnOKWhenVotesCanBeFound(t *testing.T) {
 }
 
 func TestShouldReturnCreatedWhenVoteCanBeSavedSuccessfully(t *testing.T) {
-	// SaveVoteEntity(v VoteEntity)
 	mockRepo := new(MockRepo)
 	mockRepo.On("SaveVoteEntity", persistence.VoteEntity{ID: int64(1), Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"}).Once()
 	InitRepository(mockRepo)
@@ -72,6 +72,32 @@ func TestShouldReturnCreatedWhenVoteCanBeSavedSuccessfully(t *testing.T) {
 	got := SaveVote(params)
 
 	assert.Equal(t, votes.NewSaveVoteCreated(), got.(*votes.SaveVoteCreated))
+	mockRepo.AssertExpectations(t)
+}
+
+func TestShouldReturnOKWhenVoteCanBeDeletedSuccessfully(t *testing.T) {
+	mockRepo := new(MockRepo)
+	mockRepo.On("DeleteVoteEntity", int64(1)).Return(nil).Once()
+	InitRepository(mockRepo)
+
+	params := vote.NewDeleteVoteByIDParams()
+	params.VoteID = 1
+	got := DeleteVote(params)
+
+	assert.Equal(t, vote.NewDeleteVoteByIDOK(), got.(*vote.DeleteVoteByIDOK))
+	mockRepo.AssertExpectations(t)
+}
+
+func TestShouldReturnNotFoundWhenDeleteGotError(t *testing.T) {
+	mockRepo := new(MockRepo)
+	mockRepo.On("DeleteVoteEntity", int64(1)).Return(errors.New("some error")).Once()
+	InitRepository(mockRepo)
+
+	params := vote.NewDeleteVoteByIDParams()
+	params.VoteID = 1
+	got := DeleteVote(params)
+
+	assert.Equal(t, vote.NewDeleteVoteByIDNotFound(), got.(*vote.DeleteVoteByIDNotFound))
 	mockRepo.AssertExpectations(t)
 }
 
@@ -91,6 +117,15 @@ func (o *MockRepo) GetVoteEntities() []persistence.VoteEntity {
 	args := o.Called()
 	return args.Get(0).([]persistence.VoteEntity)
 }
+
 func (o *MockRepo) SaveVoteEntity(v persistence.VoteEntity) {
 	o.Called(v)
+}
+
+func (o *MockRepo) DeleteVoteEntity(id int64) error {
+	args := o.Called(id)
+	if args.Get(0) == nil {
+		return nil
+	}
+	return args.Get(0).(error)
 }

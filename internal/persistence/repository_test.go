@@ -73,6 +73,28 @@ func TestShouldGetVotesSuccessfully(t *testing.T) {
 	assert.Equal(t, VoteEntity{ID: 2, Options: []string{"basketball"}, Topic: "What's your favorite sports?"}, got[1])
 }
 
+func TestShouldDeleteVoteSuccessfully(t *testing.T) {
+	db := make(map[int64]VoteEntity)
+	repo := RepositoryImpl{database: db}
+	db[int64(1)] = VoteEntity{ID: 1, Options: []string{"apple"}, Topic: "What's your favorite fruit?"}
+
+	err := repo.DeleteVoteEntity(int64(1))
+
+	assert.Nil(t, err)
+	_, ok := db[int64(1)]
+	assert.False(t, ok)
+}
+
+func TestShouldReturnErrorWhenDeleteVoteFailed(t *testing.T) {
+	db := make(map[int64]VoteEntity)
+	repo := RepositoryImpl{database: db}
+
+	err := repo.DeleteVoteEntity(int64(1))
+
+	assert.NotNil(t, err)
+	assert.Equal(t, "vote with ID[1] does not exist", err.Error())
+}
+
 func TestShouldReturnEmptyListWhenGetVotesAndVoteDoesNotExist(t *testing.T) {
 	db := make(map[int64]VoteEntity)
 	repo := RepositoryImpl{database: db}

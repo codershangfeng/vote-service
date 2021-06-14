@@ -30,9 +30,29 @@ paths:
         format: "int64"
       responses:
         200:
-          description: "Successful operation"
+          description: "Successful got"
           schema:
             $ref: "#/definitions/Vote"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Vote not found"
+    delete:
+      tags:
+      - "vote"
+      summary: "Delete vote by ID"
+      description: "Remove a single vote"
+      operationId: "deleteVoteById"
+      parameters:
+      - name: "voteId"
+        in: "path"
+        description: "ID of vote to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Successfull deleted"
         400:
           description: "Invalid ID supplied"
         404:
@@ -48,7 +68,7 @@ paths:
       - "application/json"
       responses:
         200:
-          description: "Successful operation"
+          description: "Successful got all"
           schema:
             $ref: "#/definitions/Votes"
     post:

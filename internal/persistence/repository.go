@@ -1,12 +1,16 @@
 package persistence
 
-import "sort"
+import (
+	"fmt"
+	"sort"
+)
 
 type (
 	Repository interface {
 		GetVoteEntity(id int64) *VoteEntity
 		GetVoteEntities() []VoteEntity
 		SaveVoteEntity(v VoteEntity)
+		DeleteVoteEntity(id int64) error
 	}
 
 	RepositoryImpl struct {
@@ -56,4 +60,12 @@ func (r RepositoryImpl) GetVoteEntities() []VoteEntity {
 
 func (r RepositoryImpl) SaveVoteEntity(v VoteEntity) {
 	r.database[v.ID] = v
+}
+
+func (r RepositoryImpl) DeleteVoteEntity(id int64) error {
+	if _, ok := r.database[id]; ok {
+		delete(r.database, id)
+		return nil
+	}
+	return fmt.Errorf("vote with ID[%d] does not exist", id)
 }

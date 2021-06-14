@@ -47,3 +47,11 @@ func SaveVote(svp votes.SaveVoteParams) middleware.Responder {
 	repository.SaveVoteEntity(persistence.VoteEntity{ID: v.ID, Options: v.Options, Topic: v.Topic})
 	return votes.NewSaveVoteCreated()
 }
+
+func DeleteVote(dvbip vote.DeleteVoteByIDParams) middleware.Responder {
+	if err := repository.DeleteVoteEntity(dvbip.VoteID); err != nil {
+		return vote.NewDeleteVoteByIDNotFound()
+	}
+
+	return vote.NewDeleteVoteByIDOK()
+}
