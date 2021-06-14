@@ -75,7 +75,7 @@ func TestGetVotesAPI(t *testing.T) {
 }
 
 func TestSaveVoteAPI(t *testing.T) {
-	res, err := http.Post(ts.URL + "/votes", "application/json", strings.NewReader("{\"id\":1,\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"}"))
+	res, err := http.Post(ts.URL+"/votes", "application/json", strings.NewReader("{\"id\":1,\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"}"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, 201, res.StatusCode)
