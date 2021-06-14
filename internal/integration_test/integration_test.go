@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations"
@@ -71,6 +72,13 @@ func TestGetVotesAPI(t *testing.T) {
 	body, err := ioutil.ReadAll(res.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, "[{\"id\":1,\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"},{\"id\":2,\"options\":[\"Noodle\",\"Dumpling\"],\"topic\":\"Which food do you prefer?\"}]\n", string(body))
+}
+
+func TestSaveVoteAPI(t *testing.T) {
+	res, err := http.Post(ts.URL + "/votes", "application/json", strings.NewReader("{\"id\":1,\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"}"))
+
+	assert.Nil(t, err)
+	assert.Equal(t, 201, res.StatusCode)
 }
 
 func configureTestAPI(api *operations.VoteServiceAPI) http.Handler {

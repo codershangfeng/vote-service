@@ -41,3 +41,9 @@ func GetVotes(gvp votes.GetVotesParams) middleware.Responder {
 
 	return votes.NewGetVotesOK().WithPayload(vs)
 }
+
+func SaveVote(svp votes.SaveVoteParams) middleware.Responder {
+	v := svp.Vote
+	repository.SaveVoteEntity(persistence.VoteEntity{ID: v.ID, Options: v.Options, Topic: v.Topic})
+	return votes.NewSaveVoteCreated()
+}

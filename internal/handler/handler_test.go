@@ -12,26 +12,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockRepo struct {
-	mock.Mock
-}
-
-func (o *MockRepo) GetVoteEntity(id int64) *persistence.VoteEntity {
-	args := o.Called(id)
-	if args.Get(0) == nil {
-		return nil
-	}
-	return args.Get(0).(*persistence.VoteEntity)
-}
-
-func (o *MockRepo) GetVoteEntities() []persistence.VoteEntity {
-	args := o.Called()
-	return args.Get(0).([]persistence.VoteEntity)
-}
-func (o *MockRepo) SaveVoteEntity(v persistence.VoteEntity) {
-	o.Called(v)
-}
-
 func TestGetHealthHandler(t *testing.T) {
 	got := GetHealthHandler(probe.NewGetHealthParams())
 
@@ -72,12 +52,45 @@ func TestShouldReturnOKWhenVotesCanBeFound(t *testing.T) {
 	}).Once()
 	InitRepository(mockRepo)
 
-	params := votes.NewGetVotesParams()
-	got := GetVotes(params)
+	got := GetVotes(votes.NewGetVotesParams())
 
 	assert.Equal(t, votes.NewGetVotesOK().WithPayload([]*models.Vote{
 		{ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"},
 		{ID: 2, Options: []string{"Noodle", "Dumpling"}, Topic: "Which food do you prefer?"},
 	}), got.(*votes.GetVotesOK))
 	mockRepo.AssertExpectations(t)
+}
+
+func TestShouldReturnCreatedWhenVoteCanBeSavedSuccessfully(t *testing.T) {
+	// SaveVoteEntity(v VoteEntity)
+	mockRepo := new(MockRepo)
+	mockRepo.On("SaveVoteEntity", persistence.VoteEntity{ID: int64(1), Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"}).Once()
+	InitRepository(mockRepo)
+
+	params := votes.NewSaveVoteParams()
+	params.Vote = &models.Vote{ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"}
+	got := SaveVote(params)
+
+	assert.Equal(t, votes.NewSaveVoteCreated(), got.(*votes.SaveVoteCreated))
+	mockRepo.AssertExpectations(t)
+}
+
+type MockRepo struct {
+	mock.Mock
+}
+
+func (o *MockRepo) GetVoteEntity(id int64) *persistence.VoteEntity {
+	args := o.Called(id)
+	if args.Get(0) == nil {
+		return nil
+	}
+	return args.Get(0).(*persistence.VoteEntity)
+}
+
+func (o *MockRepo) GetVoteEntities() []persistence.VoteEntity {
+	args := o.Called()
+	return args.Get(0).([]persistence.VoteEntity)
+}
+func (o *MockRepo) SaveVoteEntity(v persistence.VoteEntity) {
+	o.Called(v)
 }
