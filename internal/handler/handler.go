@@ -26,7 +26,7 @@ func GetVoteByIDHandler(gvbip vote.GetVoteByIDParams) middleware.Responder {
 	if entity == nil {
 		return vote.NewGetVoteByIDNotFound()
 	}
-	v := models.Vote{ID: entity.ID, Options: entity.Options, Topic: entity.Topic}
+	v := models.VoteOutgoing{Vid: entity.ID, Options: entity.Options, Topic: entity.Topic}
 	return vote.NewGetVoteByIDOK().WithPayload(&v)
 }
 
@@ -36,7 +36,7 @@ func GetVotes(gvp votes.GetVotesParams) middleware.Responder {
 	vs := make(models.Votes, 0, len(entities))
 
 	for _, e := range entities {
-		vs = append(vs, &models.Vote{ID: e.ID, Options: e.Options, Topic: e.Topic})
+		vs = append(vs, &models.VoteOutgoing{Vid: e.ID, Options: e.Options, Topic: e.Topic})
 	}
 
 	return votes.NewGetVotesOK().WithPayload(vs)
@@ -44,8 +44,9 @@ func GetVotes(gvp votes.GetVotesParams) middleware.Responder {
 
 func SaveVote(svp votes.SaveVoteParams) middleware.Responder {
 	v := svp.Vote
-	repository.SaveVoteEntity(persistence.VoteEntity{ID: v.ID, Options: v.Options, Topic: v.Topic})
-	return votes.NewSaveVoteCreated()
+	ve := repository.SaveVoteEntity(persistence.VoteEntity{Options: v.Options, Topic: *v.Topic})
+	vo := models.VoteOutgoing{Vid: ve.ID, Topic: ve.Topic, Options: ve.Options}
+	return votes.NewSaveVoteCreated().WithPayload(&vo)
 }
 
 func DeleteVote(dvbip vote.DeleteVoteByIDParams) middleware.Responder {

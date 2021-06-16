@@ -32,7 +32,7 @@ paths:
         200:
           description: Successful got
           schema:
-            $ref: "#/definitions/Vote"
+            $ref: "#/definitions/VoteOutgoing"
         400:
           description: Invalid ID supplied
         404:
@@ -79,29 +79,49 @@ paths:
       operationId: saveVote
       consumes:
       - application/json
+      produces:
+      - application/json
       parameters:
       - in: body
         name: vote
         required: true
         description: The user to create.
         schema:
-          $ref: "#/definitions/Vote"
+          $ref: "#/definitions/VoteIncoming"
       responses:
         '201':
           description: Successful created
+          schema:
+            $ref: "#/definitions/VoteOutgoing"
 
 definitions:
   Votes:
     type: array
     items:
-      $ref: "#/definitions/Vote"
+      $ref: "#/definitions/VoteOutgoing"
 
-  Vote:
+  VoteIncoming:
+    type: object
+    required:
+    - topic
+    - options
+    properties:
+      topic:
+        type: string
+        example: What's your favorite song?
+      options:
+        type: array
+        items:
+          type: string
+        example: ["Someone Like You", "Lemon", "What a Wonderful World"]
+
+  VoteOutgoing:
     type: object
     properties:
-      id:
+      vid:
         type: integer
         format: int64
+        example: 1
       topic:
         type: string
         example: What's your favorite song?

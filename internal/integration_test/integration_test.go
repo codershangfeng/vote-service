@@ -20,10 +20,10 @@ var ts *httptest.Server
 func TestMain(m *testing.M) {
 	mockRepo := persistence.NewRepository()
 	mockRepo.SaveVoteEntity(persistence.VoteEntity{
-		ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?",
+		Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?",
 	})
 	mockRepo.SaveVoteEntity(persistence.VoteEntity{
-		ID: 2, Options: []string{"Noodle", "Dumpling"}, Topic: "Which food do you prefer?",
+		Options: []string{"Noodle", "Dumpling"}, Topic: "Which food do you prefer?",
 	})
 
 	api, err := context.NewAPIHandler(mockRepo)
@@ -60,7 +60,7 @@ func TestGetVoteByIDAPI(t *testing.T) {
 
 	body, err := ioutil.ReadAll(res.Body)
 	assert.Nil(t, err)
-	assert.Equal(t, "{\"id\":1,\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"}\n", string(body))
+	assert.Equal(t, "{\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\",\"vid\":1}\n", string(body))
 }
 
 func TestGetVotesAPI(t *testing.T) {
@@ -71,7 +71,7 @@ func TestGetVotesAPI(t *testing.T) {
 
 	body, err := ioutil.ReadAll(res.Body)
 	assert.Nil(t, err)
-	assert.Equal(t, "[{\"id\":1,\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"},{\"id\":2,\"options\":[\"Noodle\",\"Dumpling\"],\"topic\":\"Which food do you prefer?\"}]\n", string(body))
+	assert.Equal(t, "[{\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\",\"vid\":1},{\"options\":[\"Noodle\",\"Dumpling\"],\"topic\":\"Which food do you prefer?\",\"vid\":2}]\n", string(body))
 }
 
 func TestSaveVoteAPI(t *testing.T) {
@@ -79,6 +79,10 @@ func TestSaveVoteAPI(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, 201, res.StatusCode)
+
+	body, err := ioutil.ReadAll(res.Body)
+	assert.Nil(t, err)
+	assert.Equal(t, "{\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\",\"vid\":3}\n", string(body))
 }
 
 func configureTestAPI(api *operations.VoteServiceAPI) http.Handler {

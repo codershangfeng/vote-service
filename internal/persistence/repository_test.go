@@ -2,28 +2,30 @@ package persistence
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+
 	"testing"
 )
 
-var mockVote = VoteEntity{ID: 1, Options: []string{"apple"}, Topic: "What's your favorite fruit?"}
-
 func TestShouldSaveVoteSuccessfully(t *testing.T) {
+	mockIDGenerator := new(MockIDGenerator)
 	db := make(map[int64]VoteEntity)
-	repo := RepositoryImpl{database: db}
+	mockIDGenerator.On("IncAndGet").Return(int64(123)).Once()
+	repo := RepositoryImpl{database: db, idGenerator: mockIDGenerator}
 
-	repo.SaveVoteEntity(mockVote)
+	repo.SaveVoteEntity(VoteEntity{Options: []string{"apple"}, Topic: "What's your favorite fruit?"})
 
 	assert.NotEmpty(t, db)
 	assert.Equal(t, 1, len(db))
-	assert.Equal(t, int64(1), db[1].ID)
-	assert.Equal(t, []string{"apple"}, db[1].Options)
-	assert.Equal(t, "What's your favorite fruit?", db[1].Topic)
+	assert.Equal(t, int64(123), db[123].ID)
+	assert.Equal(t, []string{"apple"}, db[123].Options)
+	assert.Equal(t, "What's your favorite fruit?", db[123].Topic)
 }
 
 func TestShouldGetVoteByIDSuccessfully(t *testing.T) {
 	db := make(map[int64]VoteEntity)
 	repo := RepositoryImpl{database: db}
-	db[mockVote.ID] = mockVote
+	db[int64(1)] = VoteEntity{ID: 1, Options: []string{"apple"}, Topic: "What's your favorite fruit?"}
 
 	got := repo.GetVoteEntity(int64(1))
 
@@ -45,10 +47,10 @@ func TestShouldReturnNilWhenGetVoteByIDAndVoteDoesNotExist(t *testing.T) {
 func TestShouldNotImpactOriginalEntityWhenModifyItemReturnedFromGetVote(t *testing.T) {
 	db := make(map[int64]VoteEntity)
 	repo := RepositoryImpl{database: db}
-	db[mockVote.ID] = mockVote
+	db[int64(1)] = VoteEntity{ID: 1, Options: []string{"apple"}, Topic: "What's your favorite fruit?"}
 
 	got := repo.GetVoteEntity(int64(1))
-	origin := db[mockVote.ID]
+	origin := db[int64(1)]
 	origin.ID = 3
 	origin.Options = []string{"banana"}
 	origin.Topic = "What's yours?"
@@ -102,4 +104,13 @@ func TestShouldReturnEmptyListWhenGetVotesAndVoteDoesNotExist(t *testing.T) {
 	got := repo.GetVoteEntities()
 
 	assert.Nil(t, got)
+}
+
+type MockIDGenerator struct {
+	mock.Mock
+}
+
+func (o *MockIDGenerator) IncAndGet() int64 {
+	args := o.Called()
+	return args.Get(0).(int64)
 }

@@ -28,7 +28,7 @@ func TestShouldReturnOKWhenVoteCanBeFound(t *testing.T) {
 	params.VoteID = 1
 	got := GetVoteByIDHandler(params)
 
-	assert.Equal(t, vote.NewGetVoteByIDOK().WithPayload(&models.Vote{ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"}), got.(*vote.GetVoteByIDOK))
+	assert.Equal(t, vote.NewGetVoteByIDOK().WithPayload(&models.VoteOutgoing{Vid: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"}), got.(*vote.GetVoteByIDOK))
 	mockRepo.AssertExpectations(t)
 }
 
@@ -55,23 +55,24 @@ func TestShouldReturnOKWhenVotesCanBeFound(t *testing.T) {
 
 	got := GetVotes(votes.NewGetVotesParams())
 
-	assert.Equal(t, votes.NewGetVotesOK().WithPayload([]*models.Vote{
-		{ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"},
-		{ID: 2, Options: []string{"Noodle", "Dumpling"}, Topic: "Which food do you prefer?"},
+	assert.Equal(t, votes.NewGetVotesOK().WithPayload([]*models.VoteOutgoing{
+		{Vid: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"},
+		{Vid: 2, Options: []string{"Noodle", "Dumpling"}, Topic: "Which food do you prefer?"},
 	}), got.(*votes.GetVotesOK))
 	mockRepo.AssertExpectations(t)
 }
 
 func TestShouldReturnCreatedWhenVoteCanBeSavedSuccessfully(t *testing.T) {
 	mockRepo := new(MockRepo)
-	mockRepo.On("SaveVoteEntity", persistence.VoteEntity{ID: int64(1), Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"}).Once()
+	mockRepo.On("SaveVoteEntity", persistence.VoteEntity{Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"}).Return(persistence.VoteEntity{ID: int64(1), Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"}).Once()
 	InitRepository(mockRepo)
 
 	params := votes.NewSaveVoteParams()
-	params.Vote = &models.Vote{ID: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"}
+	topic := "Which song do you prefer?"
+	params.Vote = &models.VoteIncoming{Options: []string{"Innocence", "Firework"}, Topic: &topic}
 	got := SaveVote(params)
 
-	assert.Equal(t, votes.NewSaveVoteCreated(), got.(*votes.SaveVoteCreated))
+	assert.Equal(t, votes.NewSaveVoteCreated().WithPayload(&models.VoteOutgoing{Vid: 1, Options: []string{"Innocence", "Firework"}, Topic: "Which song do you prefer?"}), got.(*votes.SaveVoteCreated))
 	mockRepo.AssertExpectations(t)
 }
 
@@ -118,8 +119,9 @@ func (o *MockRepo) GetVoteEntities() []persistence.VoteEntity {
 	return args.Get(0).([]persistence.VoteEntity)
 }
 
-func (o *MockRepo) SaveVoteEntity(v persistence.VoteEntity) {
-	o.Called(v)
+func (o *MockRepo) SaveVoteEntity(v persistence.VoteEntity) persistence.VoteEntity {
+	args := o.Called(v)
+	return args.Get(0).(persistence.VoteEntity)
 }
 
 func (o *MockRepo) DeleteVoteEntity(id int64) error {
