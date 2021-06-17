@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/codershangfeng/vote-service/app/internal/api/restapi/operations"
 	"github.com/codershangfeng/vote-service/app/internal/context"
@@ -75,7 +76,7 @@ func TestGetVotesAPI(t *testing.T) {
 }
 
 func TestSaveVoteAPI(t *testing.T) {
-	res, err := http.Post(ts.URL+"/votes", "application/json", strings.NewReader("{\"id\":1,\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"}"))
+	res, err := http.Post(ts.URL+"/votes", "application/json", strings.NewReader("{\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"}"))
 
 	assert.Nil(t, err)
 	assert.Equal(t, 201, res.StatusCode)
@@ -83,6 +84,18 @@ func TestSaveVoteAPI(t *testing.T) {
 	body, err := ioutil.ReadAll(res.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, "{\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\",\"vid\":3}\n", string(body))
+}
+
+func TestUpdateVoteAPI(t *testing.T) {
+	client := &http.Client{Timeout: 3 * time.Second}
+	req, err := http.NewRequest(http.MethodPut, ts.URL+"/vote/1", strings.NewReader("{\"options\":[\"Innocence\",\"Firework\"],\"topic\":\"Which song do you prefer?\"}"))
+	req.Header.Set("Content-Type", "application/json")
+	assert.Nil(t, err)
+
+	res, err := client.Do(req)
+
+	assert.Nil(t, err)
+	assert.Equal(t, 200, res.StatusCode)
 }
 
 func configureTestAPI(api *operations.VoteServiceAPI) http.Handler {

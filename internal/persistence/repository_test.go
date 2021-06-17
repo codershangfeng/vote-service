@@ -106,6 +106,18 @@ func TestShouldReturnEmptyListWhenGetVotesAndVoteDoesNotExist(t *testing.T) {
 	assert.Nil(t, got)
 }
 
+func TestShouldUpdateSuccuessfully(t *testing.T) {
+	db := make(map[int64]VoteEntity)
+	repo := RepositoryImpl{database: db}
+	db[int64(1)] = VoteEntity{ID: 1, Options: []string{"apple"}, Topic: "What's your favorite fruit?"}
+
+	err := repo.UpdateVoteEntity(VoteEntity{ID: 1, Options: []string{"football"}, Topic: "Which sport do you prefer?"})
+
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(db))
+	assert.Equal(t, VoteEntity{ID: 1, Options: []string{"football"}, Topic: "Which sport do you prefer?"}, db[1])
+}
+
 type MockIDGenerator struct {
 	mock.Mock
 }

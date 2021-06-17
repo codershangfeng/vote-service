@@ -12,6 +12,7 @@ type (
 		GetVoteEntities() []VoteEntity
 		SaveVoteEntity(v VoteEntity) VoteEntity
 		DeleteVoteEntity(id int64) error
+		UpdateVoteEntity(v VoteEntity) error
 	}
 
 	RepositoryImpl struct {
@@ -83,6 +84,11 @@ func (r RepositoryImpl) DeleteVoteEntity(id int64) error {
 		return nil
 	}
 	return fmt.Errorf("vote with ID[%d] does not exist", id)
+}
+
+func (r RepositoryImpl) UpdateVoteEntity(v VoteEntity) error {
+	r.database[v.ID] = v
+	return nil
 }
 
 func (igi *IDGeneratorImpl) IncAndGet() int64 {

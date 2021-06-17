@@ -102,6 +102,21 @@ func TestShouldReturnNotFoundWhenDeleteGotError(t *testing.T) {
 	mockRepo.AssertExpectations(t)
 }
 
+func TestShouldReturnOKWhenModifedExistedVote(t *testing.T) {
+	mockRepo := new(MockRepo)
+	mockRepo.On("UpdateVoteEntity", persistence.VoteEntity{ID: 1, Topic: "which sports do you perfer?", Options: []string{"basketball"}}).Return(nil).Once()
+	InitRepository(mockRepo)
+
+	params := vote.NewUpdateVoteByIDParams()
+	params.VoteID = 1
+	topic := "which sports do you perfer?"
+	params.Vote = &models.VoteIncoming{Topic: &topic, Options: []string{"basketball"}}
+	got := UpdateVote(params)
+
+	assert.Equal(t, vote.NewUpdateVoteByIDOK(), got.(*vote.UpdateVoteByIDOK))
+	mockRepo.AssertExpectations(t)
+}
+
 type MockRepo struct {
 	mock.Mock
 }
@@ -126,6 +141,14 @@ func (o *MockRepo) SaveVoteEntity(v persistence.VoteEntity) persistence.VoteEnti
 
 func (o *MockRepo) DeleteVoteEntity(id int64) error {
 	args := o.Called(id)
+	if args.Get(0) == nil {
+		return nil
+	}
+	return args.Get(0).(error)
+}
+
+func (o *MockRepo) UpdateVoteEntity(v persistence.VoteEntity) error {
+	args := o.Called(v)
 	if args.Get(0) == nil {
 		return nil
 	}

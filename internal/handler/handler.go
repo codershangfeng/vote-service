@@ -56,3 +56,8 @@ func DeleteVote(dvbip vote.DeleteVoteByIDParams) middleware.Responder {
 
 	return vote.NewDeleteVoteByIDOK()
 }
+
+func UpdateVote(uvbip vote.UpdateVoteByIDParams) middleware.Responder {
+	repository.UpdateVoteEntity(persistence.VoteEntity{ID: uvbip.VoteID, Options: uvbip.Vote.Options, Topic: *uvbip.Vote.Topic})
+	return vote.NewUpdateVoteByIDOK()
+}

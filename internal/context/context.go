@@ -61,5 +61,9 @@ func NewAPIHandler(repo persistence.Repository) (*operations.VoteServiceAPI, err
 		handler.DeleteVote,
 	)
 
+	api.VoteUpdateVoteByIDHandler = vote.UpdateVoteByIDHandlerFunc(
+		handler.UpdateVote,
+	)
+
 	return api, nil
 }
