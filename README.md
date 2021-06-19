@@ -12,7 +12,7 @@ $ gh repo clone codershangfeng/vote-service
 ```
 
 ### Install Go
-Make sure you are using go1.15. To check, run:
+Make sure you are using go1.16. To check, run:
 ```zsh
 $ go version
 ```
@@ -20,7 +20,7 @@ Or, you could use `gvm` to install and alter between versions:
 ```zsh
 $ bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
 $ gvm listall
-$ gvm install go1.15
+$ gvm install go1.16
 ```
 
 To check your installed Go version, run:
@@ -30,7 +30,7 @@ $ gvm list
 
 To switch to a specific version, run:
 ```
-$ gvm use go1.15 --default
+$ gvm use go1.16 --default
 ```
 
 ### Install Go-Swagger
