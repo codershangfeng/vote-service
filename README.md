@@ -34,11 +34,26 @@ $ gvm use go1.15 --default
 ```
 
 ### Install Go-Swagger
+
 ```zsh
 $ brew tap go-swagger/go-swagger
 $ brew install go-swagger
 ```
 Install swagger tool, [more details](https://goswagger.io/install.html)
+
+### Validate Swagger Yaml
+
+To validate the swagger file (`./api/swagger.yaml`), run:
+```bash
+make validate
+```
+
+### Generate Swagger
+
+To generate server with its models and operations, run:
+```bash
+make gen
+```
 
 ### Build app
 ```zsh
@@ -52,17 +67,6 @@ The binary will be generated into `./bin` folder.
 ```zsh
 $ make test
 ```
-### Run Unit Test
-```zsh
-$ make utest
-```
-### Run Integration Test
-```zsh
-$ make itest
-```
-
-### Debug Test
-- Because all current test files are tagged with `+build`, which let to vs-code can not debug, a work around solution is to remove test tags in the head of each test file, such as `// +build ...`
 
 ## How to Deploy to Local Demo Kubernetes Cluster
 
